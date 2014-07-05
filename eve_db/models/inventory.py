@@ -40,7 +40,7 @@ class InvMarketGroup(models.Model):
     """
     id = models.IntegerField(unique=True, primary_key=True)
     name = models.CharField(max_length=50)
-    description = models.CharField(max_length=300012, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
     parent = models.ForeignKey('InvMarketGroup', blank=True, null=True)
     has_items = models.BooleanField(default=True)
     icon_id = models.IntegerField(blank=True, null=True)
