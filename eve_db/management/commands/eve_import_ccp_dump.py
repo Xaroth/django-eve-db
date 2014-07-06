@@ -117,7 +117,7 @@ the CCP data dump. If no arguments are specified, all tables will be imported.""
             else:
                 specified_importers = get_importer_classes_from_arg_list(args)
                 start_at_import = options.get('start_at_import')
-                print "Importing: %s" % args[1:]
+                print "Importing: %s" % (', '.join(args[1:]))
 
                 include_deps = options.get('include_deps')
                 if include_deps and not start_at_import:
