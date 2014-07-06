@@ -44,8 +44,8 @@ class PlanetSchematicsPinMap(models.Model):
     CCP Table: planetSchematicsPinMap
     """
     
-    schematic = models.ForeignKey(PlanetSchematic)
-    type = models.ForeignKey('InvType')
+    schematic = models.ForeignKey(PlanetSchematic, db_constraint=False, null=True)
+    type = models.ForeignKey('InvType', db_constraint=False, null=True)
     
     class Meta:
         app_label = 'eve_db'
@@ -69,10 +69,10 @@ class PlanetSchematicsTypeMap(models.Model):
     CCP Table: planetSchematicsTypeMap
     """
     
-    schematic = models.ForeignKey(PlanetSchematic)
-    type = models.ForeignKey('InvType')
+    schematic = models.ForeignKey(PlanetSchematic, db_constraint=False, null=True)
+    type = models.ForeignKey('InvType', db_constraint=False, null=True)
     quantity = models.IntegerField(null=True, blank=True)
-    is_input = models.BooleanField(blank=True)
+    is_input = models.NullBooleanField()
     
     class Meta:
         app_label = 'eve_db'

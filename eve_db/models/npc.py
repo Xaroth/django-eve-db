@@ -52,23 +52,23 @@ class CrpNPCCorporation(models.Model):
     extent = models.CharField(choices=EXTENT_CHOICES, max_length=1,
                               blank=True)
 
-    solar_system = models.ForeignKey('MapSolarSystem', blank=True, null=True)
+    solar_system = models.ForeignKey('MapSolarSystem', blank=True, null=True, db_constraint=False)
     investor1 = models.ForeignKey('self', blank=True, null=True,
-                                  related_name='invested1_set')
+                                  related_name='invested1_set', db_constraint=False)
     investor1_shares = models.IntegerField(blank=True, null=True)
     investor2 = models.ForeignKey('self', blank=True, null=True,
-                                  related_name='invested2_set')
+                                  related_name='invested2_set', db_constraint=False)
     investor2_shares = models.IntegerField(blank=True, null=True)
     investor3 = models.ForeignKey('self', blank=True, null=True,
-                                  related_name='invested3_set')
+                                  related_name='invested3_set', db_constraint=False)
     investor3_shares = models.IntegerField(blank=True, null=True)
     investor4 = models.ForeignKey('self', blank=True, null=True,
-                                  related_name='invested4_set')
+                                  related_name='invested4_set', db_constraint=False)
     investor4_shares = models.IntegerField(blank=True, null=True)
     friendly_corp = models.ForeignKey('self', blank=True, null=True,
-                                      related_name='friendly_with_set')
+                                      related_name='friendly_with_set', db_constraint=False)
     enemy_corp = models.ForeignKey('self', blank=True, null=True,
-                                   related_name='enemy_of_set')
+                                   related_name='enemy_of_set', db_constraint=False)
     public_share_percent = models.FloatField(blank=True, null=True)
     initial_share_price = models.IntegerField(blank=True, null=True)
     min_security = models.FloatField(blank=True, null=True)
@@ -77,7 +77,7 @@ class CrpNPCCorporation(models.Model):
     corridor_systems = models.IntegerField(default=0)
     hub_systems = models.IntegerField(default=0)
     border_systems = models.IntegerField(default=0)
-    faction = models.ForeignKey('ChrFaction', blank=True, null=True)
+    faction = models.ForeignKey('ChrFaction', blank=True, null=True, db_constraint=False)
     size_factor = models.FloatField(blank=True, null=True)
     station_count = models.IntegerField(default=0, blank=True, null=True)
     station_system_count = models.IntegerField(default=0, blank=True, null=True)
@@ -129,8 +129,8 @@ class CrpNPCCorporationDivision(models.Model):
     CCP Table: crpNPCCorporationDivisions
     CCP Primary key: ("corporationID" int(11), "divisionID" tinyint(3))
     """
-    corporation = models.ForeignKey(CrpNPCCorporation)
-    division = models.ForeignKey(CrpNPCDivision)
+    corporation = models.ForeignKey(CrpNPCCorporation, db_constraint=False, null=True)
+    division = models.ForeignKey(CrpNPCDivision, db_constraint=False, null=True)
     size = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -155,8 +155,8 @@ class CrpNPCCorporationTrade(models.Model):
     CCP Table: crpNPCCorporationTrades
     CCP Primary key: ("corporationID" int(11), "typeID" smallint(6))
     """
-    corporation = models.ForeignKey(CrpNPCCorporation)
-    type = models.ForeignKey('InvType', blank=True, null=True)
+    corporation = models.ForeignKey(CrpNPCCorporation, db_constraint=False, null=True)
+    type = models.ForeignKey('InvType', blank=True, null=True, db_constraint=False)
 
     class Meta:
         app_label = 'eve_db'
@@ -178,8 +178,8 @@ class CrpNPCCorporationResearchField(models.Model):
     CCP Table: crpNPCCorporationResearchFields
     CCP Primary key: ("skillID" smallint(6), "corporationID" int(11))
     """
-    corporation = models.ForeignKey(CrpNPCCorporation)
-    skill = models.ForeignKey('InvType', blank=True, null=True)
+    corporation = models.ForeignKey(CrpNPCCorporation, db_constraint=False, null=True)
+    skill = models.ForeignKey('InvType', blank=True, null=True, db_constraint=False)
 
     class Meta:
         app_label = 'eve_db'
@@ -222,12 +222,12 @@ class AgtAgent(models.Model):
     id = models.IntegerField(unique=True, primary_key=True)
     name = models.CharField(max_length=255, blank=True)
     division = models.ForeignKey(CrpNPCDivision, blank=True,
-                                 null=True)
-    corporation = models.ForeignKey(CrpNPCCorporation, blank=True, null=True)
-    location = models.ForeignKey('MapDenormalize', blank=True, null=True)
+                                 null=True, db_constraint=False)
+    corporation = models.ForeignKey(CrpNPCCorporation, blank=True, null=True, db_constraint=False)
+    location = models.ForeignKey('MapDenormalize', blank=True, null=True, db_constraint=False)
     level = models.IntegerField(blank=True, null=True)
     quality = models.IntegerField(blank=True, null=True)
-    type = models.ForeignKey(AgtAgentType, blank=True, null=True)
+    type = models.ForeignKey(AgtAgentType, blank=True, null=True, db_constraint=False)
     locator = models.BooleanField(default=False)
 
     class Meta:
@@ -247,8 +247,8 @@ class AgtResearchAgent(models.Model):
     CCP Table: agtResearchAgents
     CCP Primary key: "agentID" int(11)
     """
-    agent = models.ForeignKey(AgtAgent)
-    type = models.ForeignKey('InvType')
+    agent = models.ForeignKey(AgtAgent, db_constraint=False, null=True)
+    type = models.ForeignKey('InvType', db_constraint=False, null=True)
 
     class Meta:
         app_label = 'eve_db'

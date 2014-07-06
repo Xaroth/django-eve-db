@@ -39,14 +39,14 @@ class ChrBloodline(models.Model):
     id = models.IntegerField(unique=True, primary_key=True)
     name = models.CharField(max_length=255, blank=True)
     race = models.ForeignKey(ChrRace, blank=True, null=True,
-                             related_name='bloodline_set')
+                             related_name='bloodline_set', db_constraint=False)
     description = models.TextField(blank=True)
     male_description = models.TextField(blank=True)
     female_description = models.TextField(blank=True)
     starter_ship_type = models.ForeignKey('InvType', blank=True,
                                     null=True,
-                                    related_name='bloodline_starter_ship_set')
-    corporation = models.ForeignKey('CrpNPCCorporation', blank=True, null=True)
+                                    related_name='bloodline_starter_ship_set', db_constraint=False)
+    corporation = models.ForeignKey('CrpNPCCorporation', blank=True, null=True, db_constraint=False)
     starting_perception = models.IntegerField(default=0)
     starting_willpower = models.IntegerField(default=0)
     starting_charisma = models.IntegerField(default=0)
@@ -78,7 +78,7 @@ class ChrAncestry(models.Model):
     """
     id = models.IntegerField(unique=True, primary_key=True)
     name = models.CharField(max_length=255, blank=True)
-    bloodline = models.ForeignKey(ChrBloodline, blank=True, null=True)
+    bloodline = models.ForeignKey(ChrBloodline, blank=True, null=True, db_constraint=False)
     description = models.TextField(blank=True)
     perception_bonus = models.IntegerField(default=0)
     willpower_bonus = models.IntegerField(default=0)
@@ -137,9 +137,9 @@ class ChrFaction(models.Model):
     name = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
     solar_system = models.ForeignKey('MapSolarSystem', blank=True, null=True,
-                                     related_name='faction_set')
+                                     related_name='faction_set', db_constraint=False)
     corporation = models.ForeignKey('CrpNPCCorporation', blank=True, null=True,
-                                    related_name='faction_set')
+                                    related_name='faction_set', db_constraint=False)
     size_factor = models.FloatField(blank=True, null=True)
     station_count = models.IntegerField(default=0)
     station_system_count = models.IntegerField(default=0)

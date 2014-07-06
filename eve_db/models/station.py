@@ -39,7 +39,7 @@ class RamAssemblyLineType(models.Model):
     base_time_multiplier = models.FloatField(blank=True, null=True)
     base_material_multiplier = models.FloatField(blank=True, null=True)
     volume = models.FloatField(blank=True, null=True)
-    activity = models.ForeignKey(RamActivity, blank=True, null=True)
+    activity = models.ForeignKey(RamActivity, blank=True, null=True, db_constraint=False)
     min_cost_per_hour = models.FloatField(blank=True, null=True)
 
     class Meta:
@@ -65,8 +65,8 @@ class RamAssemblyLine(models.Model):
     # Just a denormalized assembly_line_type.name.
     name = models.CharField(max_length=255, blank=True)
     assembly_line_type = models.ForeignKey(RamAssemblyLineType, blank=True,
-                                           null=True)
-    station = models.ForeignKey('StaStation', blank=True, null=True)
+                                           null=True, db_constraint=False)
+    station = models.ForeignKey('StaStation', blank=True, null=True, db_constraint=False)
     ui_grouping_id = models.IntegerField(blank=True, null=True)
     cost_install = models.FloatField(blank=True, null=True)
     cost_per_hour = models.FloatField(blank=True, null=True)
@@ -77,8 +77,8 @@ class RamAssemblyLine(models.Model):
     minimum_corp_security = models.FloatField(blank=True, null=True)
     maximum_char_security = models.FloatField(blank=True, null=True)
     maximum_corp_security = models.FloatField(blank=True, null=True)
-    owner = models.ForeignKey('CrpNPCCorporation', blank=True, null=True)
-    activity = models.ForeignKey('RamActivity', blank=True, null=True)
+    owner = models.ForeignKey('CrpNPCCorporation', blank=True, null=True, db_constraint=False)
+    activity = models.ForeignKey('RamActivity', blank=True, null=True, db_constraint=False)
     next_free_time = models.DateTimeField(blank=True, null=True)
     restriction_mask = models.IntegerField(blank=True, null=True)
 
@@ -101,8 +101,8 @@ class RamAssemblyLineTypeDetailPerCategory(models.Model):
     CCP Table: ramAssemblyLineTypeDetailPerCategory
     CCP Primary key: ("assemblyLineTypeID" tinyint(3), "categoryID" tinyint(3))
     """
-    assembly_line_type = models.ForeignKey(RamAssemblyLineType)
-    category = models.ForeignKey('InvCategory')
+    assembly_line_type = models.ForeignKey(RamAssemblyLineType, db_constraint=False, null=True)
+    category = models.ForeignKey('InvCategory', db_constraint=False, null=True)
     time_multiplier = models.FloatField(blank=True, null=True)
     material_multiplier = models.FloatField(blank=True, null=True)
 
@@ -126,8 +126,8 @@ class RamAssemblyLineTypeDetailPerGroup(models.Model):
     CCP Table: ramAssemblyLineTypeDetailPerGroup
     CCP Primary key: ("assemblyLineTypeID" tinyint(3), "groupID" smallint(6))
     """
-    assembly_line_type = models.ForeignKey(RamAssemblyLineType)
-    group = models.ForeignKey('InvGroup')
+    assembly_line_type = models.ForeignKey(RamAssemblyLineType, db_constraint=False, null=True)
+    group = models.ForeignKey('InvGroup', db_constraint=False, null=True)
     time_multiplier = models.FloatField(blank=True, null=True)
     material_multiplier = models.FloatField(blank=True, null=True)
 
@@ -151,13 +151,13 @@ class RamAssemblyLineStations(models.Model):
     CCP Table: ramAssemblyLineStations
     CCP Primary key: ("stationID" int(11), "assemblyLineTypeID" tinyint(3))
     """
-    station = models.ForeignKey('StaStation')
-    assembly_line_type = models.ForeignKey('RamAssemblyLineType')
+    station = models.ForeignKey('StaStation', db_constraint=False, null=True)
+    assembly_line_type = models.ForeignKey('RamAssemblyLineType', db_constraint=False, null=True)
     quantity = models.IntegerField(blank=True, null=True)
-    station_type = models.ForeignKey('StaStationType', blank=True, null=True)
-    owner = models.ForeignKey('CrpNPCCorporation', blank=True, null=True)
-    solar_system = models.ForeignKey('MapSolarSystem', blank=True, null=True)
-    region = models.ForeignKey('MapRegion', blank=True, null=True)
+    station_type = models.ForeignKey('StaStationType', blank=True, null=True, db_constraint=False)
+    owner = models.ForeignKey('CrpNPCCorporation', blank=True, null=True, db_constraint=False)
+    solar_system = models.ForeignKey('MapSolarSystem', blank=True, null=True, db_constraint=False)
+    region = models.ForeignKey('MapRegion', blank=True, null=True, db_constraint=False)
 
     class Meta:
         app_label = 'eve_db'
@@ -177,12 +177,12 @@ class RamTypeRequirement(models.Model):
     CCP Table: ramTypeRequirements
     CCP Primary key: ("typeID" smallint(6), "activityID" tinyint(3), "requiredTypeID" smallint(6))
     """
-    type = models.ForeignKey('InvType', related_name='type_requirement')
-    activity_type = models.ForeignKey('RamActivity')
-    required_type = models.ForeignKey('InvType', related_name='required_type')
+    type = models.ForeignKey('InvType', related_name='type_requirement', db_constraint=False, null=True)
+    activity_type = models.ForeignKey('RamActivity', db_constraint=False, null=True)
+    required_type = models.ForeignKey('InvType', related_name='required_type', db_constraint=False, null=True)
     quantity = models.IntegerField(blank=True, null=True)
     damage_per_job = models.FloatField(blank=True, null=True)
-    recycle = models.BooleanField(blank=True)
+    recycle = models.NullBooleanField()
 
     class Meta:
         app_label = 'eve_db'
@@ -235,7 +235,7 @@ class StaStationType(models.Model):
     dock_orientation_y = models.FloatField(blank=True, null=True)
     dock_entry_z = models.FloatField(blank=True, null=True)
     dock_orientation_z = models.FloatField(blank=True, null=True)
-    operation = models.ForeignKey('StaOperation', blank=True, null=True)
+    operation = models.ForeignKey('StaOperation', blank=True, null=True, db_constraint=False)
     office_slots = models.IntegerField(blank=True, null=True)
     reprocessing_efficiency = models.FloatField(blank=True, null=True)
     is_conquerable = models.BooleanField(default=False)
@@ -270,19 +270,19 @@ class StaOperation(models.Model):
     ratio = models.IntegerField(blank=True, null=True)
     caldari_station_type = models.ForeignKey(StaStationType,
                                              related_name='caldari_station_operation_set',
-                                             blank=True, null=True)
+                                             blank=True, null=True, db_constraint=False)
     minmatar_station_type = models.ForeignKey(StaStationType,
                                               related_name='minmatar_station_operation_set',
-                                              blank=True, null=True)
+                                              blank=True, null=True, db_constraint=False)
     amarr_station_type = models.ForeignKey(StaStationType,
                                            related_name='amarr_station_operation_set',
-                                           blank=True, null=True)
+                                           blank=True, null=True, db_constraint=False)
     gallente_station_type = models.ForeignKey(StaStationType,
                                               related_name='gallente_station_operation_set',
-                                              blank=True, null=True)
+                                              blank=True, null=True, db_constraint=False)
     jove_station_type = models.ForeignKey(StaStationType,
                                           related_name='jove_station_operation_set',
-                                          blank=True, null=True)
+                                          blank=True, null=True, db_constraint=False)
 
 
     class Meta:
@@ -309,12 +309,12 @@ class StaStation(models.Model):
     docking_cost_per_volume = models.FloatField(blank=True, null=True)
     max_ship_volume_dockable = models.FloatField(blank=True, null=True)
     office_rental_cost = models.IntegerField(blank=True, null=True)
-    operation = models.ForeignKey(StaOperation, blank=True, null=True)
-    type = models.ForeignKey(StaStationType, blank=True, null=True)
-    corporation = models.ForeignKey('CrpNPCCorporation', blank=True, null=True)
-    solar_system = models.ForeignKey('MapSolarSystem', blank=True, null=True)
-    constellation = models.ForeignKey('MapConstellation', blank=True, null=True)
-    region = models.ForeignKey('MapRegion', blank=True, null=True)
+    operation = models.ForeignKey(StaOperation, blank=True, null=True, db_constraint=False)
+    type = models.ForeignKey(StaStationType, blank=True, null=True, db_constraint=False)
+    corporation = models.ForeignKey('CrpNPCCorporation', blank=True, null=True, db_constraint=False)
+    solar_system = models.ForeignKey('MapSolarSystem', blank=True, null=True, db_constraint=False)
+    constellation = models.ForeignKey('MapConstellation', blank=True, null=True, db_constraint=False)
+    region = models.ForeignKey('MapRegion', blank=True, null=True, db_constraint=False)
     name = models.CharField(max_length=100, blank=True)
     x = models.FloatField(blank=True, null=True)
     y = models.FloatField(blank=True, null=True)
@@ -342,8 +342,8 @@ class StaOperationServices(models.Model):
     CCP Table: staOperationServices
     CCP Primary key: ("operationID" tinyint(3), "serviceID" int(11))
     """
-    operation = models.ForeignKey(StaOperation)
-    service = models.ForeignKey(StaService)
+    operation = models.ForeignKey(StaOperation, db_constraint=False, null=True)
+    service = models.ForeignKey(StaService, db_constraint=False, null=True)
 
     class Meta:
         app_label = 'eve_db'
@@ -363,8 +363,8 @@ class RamInstallationTypeContent(models.Model):
     CCP Table: ramInstallationTypeContent
     CCP Primary key: ("installationTypeID" int(11))
     """
-    installation_type = models.ForeignKey('InvType')
-    assembly_line_type = models.ForeignKey(RamAssemblyLineType)
+    installation_type = models.ForeignKey('InvType', db_constraint=False, null=True)
+    assembly_line_type = models.ForeignKey(RamAssemblyLineType, db_constraint=False, null=True)
     quantity = models.IntegerField(null=True)
 
     class Meta:

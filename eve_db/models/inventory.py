@@ -41,7 +41,7 @@ class InvMarketGroup(models.Model):
     id = models.IntegerField(unique=True, primary_key=True)
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True, null=True)
-    parent = models.ForeignKey('InvMarketGroup', blank=True, null=True)
+    parent = models.ForeignKey('InvMarketGroup', blank=True, null=True, db_constraint=False)
     has_items = models.BooleanField(default=True)
     icon_id = models.IntegerField(blank=True, null=True)
 
@@ -164,13 +164,13 @@ class InvType(models.Model):
     id = models.IntegerField(unique=True, primary_key=True)
     name = models.CharField(max_length=100, blank=True)
     description = models.TextField(blank=True)
-    group = models.ForeignKey(InvGroup, blank=True, null=True)
-    market_group = models.ForeignKey(InvMarketGroup, blank=True, null=True)
+    group = models.ForeignKey(InvGroup, blank=True, null=True, db_constraint=False)
+    market_group = models.ForeignKey(InvMarketGroup, blank=True, null=True, db_constraint=False)
     mass = models.FloatField(blank=True, null=True)
     volume = models.FloatField(blank=True, null=True)
     capacity = models.FloatField(blank=True, null=True)
     portion_size = models.IntegerField(blank=True, null=True)
-    race = models.ForeignKey('ChrRace', blank=True, null=True)
+    race = models.ForeignKey('ChrRace', blank=True, null=True, db_constraint=False)
     base_price = models.FloatField(blank=True, null=True)
     is_published = models.BooleanField(default=False)
     chance_of_duplicating = models.FloatField(blank=True, null=True)
@@ -198,9 +198,9 @@ class InvTypeMaterial(models.Model):
     CCP Table: invTypeMaterials
     CCP Primary key: ("typeID" smallint(6), "materialTypeID" smallint(6))
     """
-    type = models.ForeignKey(InvType, related_name='material_set')
+    type = models.ForeignKey(InvType, related_name='material_set', db_constraint=False, null=True)
     material_type = models.ForeignKey(InvType,
-                                      related_name='itemtype_set')
+                                      related_name='itemtype_set', db_constraint=False, null=True)
     quantity = models.IntegerField(default=0)
 
     class Meta:
@@ -229,10 +229,10 @@ class InvMetaType(models.Model):
     """
     type = models.ForeignKey(InvType,
                             unique=True, primary_key=True,
-                            related_name='inventorymetatype_type_set')
+                            related_name='inventorymetatype_type_set', db_constraint=False)
     parent_type = models.ForeignKey(InvType,
-                            related_name='inventorymetatype_parent_type_set')
-    meta_group = models.ForeignKey(InvMetaGroup)
+                            related_name='inventorymetatype_parent_type_set', db_constraint=False, null=True)
+    meta_group = models.ForeignKey(InvMetaGroup, db_constraint=False, null=True)
 
     class Meta:
         app_label = 'eve_db'
@@ -307,13 +307,13 @@ class DgmAttributeType(models.Model):
     """
     id = models.IntegerField(unique=True, primary_key=True)
     name = models.CharField(max_length=75)
-    category = models.ForeignKey(DgmAttributeCategory, blank=True, null=True)
+    category = models.ForeignKey(DgmAttributeCategory, blank=True, null=True, db_constraint=False)
     description = models.TextField(blank=True)
     icon_id = models.IntegerField(blank=True, null=True)
     default_value = models.IntegerField(blank=True, null=True)
     is_published = models.BooleanField(default=False)
     display_name = models.CharField(max_length=100, blank=True)
-    unit = models.ForeignKey('EveUnit', blank=True, null=True)
+    unit = models.ForeignKey('EveUnit', blank=True, null=True, db_constraint=False)
     is_stackable = models.BooleanField(default=False)
     high_is_good = models.BooleanField(default=True)
 
@@ -336,8 +336,8 @@ class DgmTypeAttribute(models.Model):
     CCP Table: dgmTypeAttributes
     CCP Primary key: ("typeID" smallint(6), "attributeID" smallint(6))
     """
-    inventory_type = models.ForeignKey(InvType)
-    attribute = models.ForeignKey(DgmAttributeType)
+    inventory_type = models.ForeignKey(InvType, db_constraint=False, null=True)
+    attribute = models.ForeignKey(DgmAttributeType, db_constraint=False, null=True)
     value_int = models.IntegerField(blank=True, null=True)
     value_float = models.FloatField(blank=True, null=True)
 
@@ -363,13 +363,13 @@ class InvBlueprintType(models.Model):
     """
     blueprint_type = models.ForeignKey(InvType,
                                        unique=True, primary_key=True,
-                                       related_name='blueprint_type_set')
+                                       related_name='blueprint_type_set', db_constraint=False)
     product_type = models.ForeignKey(InvType,
-                                     related_name='blueprint_product_type_set')
+                                     related_name='blueprint_product_type_set', db_constraint=False, null=True)
     # This is used for T2. Not always populated.
     parent_blueprint_type = models.ForeignKey(InvType, blank=True,
                                               null=True,
-                                              related_name='parent_blueprint_type_set')
+                                              related_name='parent_blueprint_type_set', db_constraint=False)
     production_time = models.IntegerField(blank=True, null=True)
     tech_level = models.IntegerField(blank=True, null=True)
     research_productivity_time = models.IntegerField(blank=True, null=True)
@@ -418,19 +418,19 @@ class DgmEffect(models.Model):
     is_assistance = models.BooleanField(default=False)
     duration_attribute = models.ForeignKey(DgmAttributeType,
                                            blank=True, null=True,
-                                           related_name='inventoryeffectdurationeattribute')
+                                           related_name='inventoryeffectdurationeattribute', db_constraint=False)
     tracking_speed_attribute = models.ForeignKey(DgmAttributeType,
                                                  blank=True, null=True,
-                                                 related_name='inventoryeffecttrackingspeedattribute')
+                                                 related_name='inventoryeffecttrackingspeedattribute', db_constraint=False)
     discharge_attribute = models.ForeignKey(DgmAttributeType,
                                             blank=True, null=True,
-                                            related_name='inventoryeffectdischargeattribute')
+                                            related_name='inventoryeffectdischargeattribute', db_constraint=False)
     range_attribute = models.ForeignKey(DgmAttributeType,
                                         blank=True, null=True,
-                                        related_name='inventoryeffectrangeattribute')
+                                        related_name='inventoryeffectrangeattribute', db_constraint=False)
     falloff_attribute = models.ForeignKey(DgmAttributeType,
                                           blank=True, null=True,
-                                          related_name='inventoryeffectfalloffattribute')
+                                          related_name='inventoryeffectfalloffattribute', db_constraint=False)
     disallow_auto_repeat = models.BooleanField(default=False)
     is_published = models.BooleanField(default=False)
     # Name of effect as displayed in game.
@@ -443,13 +443,13 @@ class DgmEffect(models.Model):
     sfx_name = models.CharField(max_length=100, blank=True)
     npc_usage_chance_attribute = models.ForeignKey(DgmAttributeType,
                                                    blank=True, null=True,
-                                                   related_name='inventoryeffectnpcusagechanceattribute')
+                                                   related_name='inventoryeffectnpcusagechanceattribute', db_constraint=False)
     npc_activation_chance_attribute = models.ForeignKey(DgmAttributeType,
                                                         blank=True, null=True,
-                                                        related_name='inventoryeffectnpcactivationchanceattribute')
+                                                        related_name='inventoryeffectnpcactivationchanceattribute', db_constraint=False)
     fitting_usage_chance_attribute = models.ForeignKey(DgmAttributeType,
                                                        blank=True, null=True,
-                                                       related_name='inventoryeffectfittingusagechanceattribute')
+                                                       related_name='inventoryeffectfittingusagechanceattribute', db_constraint=False)
 
     class Meta:
         app_label = 'eve_db'
@@ -472,8 +472,8 @@ class DgmTypeEffect(models.Model):
     CCP Table: dgmTypeEffects
     CCP Primary key: ("typeID" smallint(6), "effectID" smallint(6))
     """
-    type = models.ForeignKey(InvType)
-    effect = models.ForeignKey(DgmEffect)
+    type = models.ForeignKey(InvType, db_constraint=False, null=True)
+    effect = models.ForeignKey(DgmEffect, db_constraint=False, null=True)
     is_default = models.BooleanField(default=False)
 
     class Meta:
@@ -521,13 +521,13 @@ class InvPOSResource(models.Model):
     CCP Primary key: ("controlTowerTypeID" smallint(6), "resourceTypeID" smallint(6))
     """
     control_tower_type = models.ForeignKey(InvType,
-                                           related_name='tower_resource_set')
+                                           related_name='tower_resource_set', db_constraint=False, null=True)
     resource_type = models.ForeignKey(InvType,
-                                      related_name='pos_resource_set')
-    purpose = models.ForeignKey(InvPOSResourcePurpose, blank=True, null=True)
+                                      related_name='pos_resource_set', db_constraint=False, null=True)
+    purpose = models.ForeignKey(InvPOSResourcePurpose, blank=True, null=True, db_constraint=False)
     quantity = models.IntegerField(blank=True, null=True)
     min_security_level = models.IntegerField(blank=True, null=True)
-    faction = models.ForeignKey('ChrFaction', blank=True, null=True)
+    faction = models.ForeignKey('ChrFaction', blank=True, null=True, db_constraint=False)
 
     class Meta:
         app_label = 'eve_db'
@@ -553,11 +553,11 @@ class InvTypeReaction(models.Model):
                    (1, 'Reaction material'))
 
     reaction_type = models.ForeignKey(InvType,
-                    related_name='inventorytypereactions_reaction_type_set')
+                    related_name='inventorytypereactions_reaction_type_set', db_constraint=False, null=True)
     input = models.IntegerField(choices=INPUT_TYPES, blank=True, null=True)
     type = models.ForeignKey(InvType,
                     related_name='inventorytypereactions_type_set',
-                    help_text="Reaction result or material.")
+                    help_text="Reaction result or material.", db_constraint=False, null=True)
     quantity = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -580,8 +580,8 @@ class InvContrabandType(models.Model):
     CCP Table: invContrabandTypes
     CCP Primary key: ("factionID" int(11), "typeID" smallint(6))
     """
-    faction = models.ForeignKey('ChrFaction')
-    type = models.ForeignKey(InvType)
+    faction = models.ForeignKey('ChrFaction', db_constraint=False, null=True)
+    type = models.ForeignKey(InvType, db_constraint=False, null=True)
     standing_loss = models.FloatField(blank=True, null=True)
     confiscate_min_sec = models.FloatField(blank=True, null=True)
     fine_by_value = models.FloatField(blank=True, null=True)
@@ -614,10 +614,10 @@ class InvItem(models.Model):
     CCP Primary key: "itemID" int(11)
     """
     id = models.IntegerField(unique=True, primary_key=True)
-    type = models.ForeignKey(InvType)
+    type = models.ForeignKey(InvType, db_constraint=False, null=True)
     owner = models.IntegerField(null=True)
     location = models.IntegerField(null=True)
-    flag = models.ForeignKey('InvFlag')
+    flag = models.ForeignKey('InvFlag', db_constraint=False, null=True)
     quantity = models.IntegerField()
 
     class Meta:
@@ -668,7 +668,7 @@ class InvUniqueName(models.Model):
     """
     id = models.IntegerField(unique=True, primary_key=True)
     name = models.CharField(max_length=100, unique=True)
-    group = models.ForeignKey('InvGroup')
+    group = models.ForeignKey('InvGroup', db_constraint=False, null=True)
 
     class Meta:
         app_label = 'eve_db'

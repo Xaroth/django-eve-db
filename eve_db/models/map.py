@@ -41,7 +41,7 @@ class MapRegion(models.Model):
     """
     id = models.IntegerField(unique=True, primary_key=True)
     name = models.CharField(max_length=255, blank=True)
-    faction = models.ForeignKey('ChrFaction', blank=True, null=True)
+    faction = models.ForeignKey('ChrFaction', blank=True, null=True, db_constraint=False)
     x = models.FloatField(blank=True, null=True)
     x_min = models.FloatField(blank=True, null=True)
     x_max = models.FloatField(blank=True, null=True)
@@ -72,9 +72,9 @@ class MapRegionJump(models.Model):
     CCP Primary key: ("fromRegionID" int(11), "toRegionID" int(11))
     """
     from_region = models.ForeignKey(MapRegion,
-                                    related_name='region_jumps_from_region_set')
+                                    related_name='region_jumps_from_region_set', db_constraint=False, null=True)
     to_region = models.ForeignKey(MapRegion,
-                                  related_name='region_jumps_to_region_set')
+                                  related_name='region_jumps_to_region_set', db_constraint=False, null=True)
 
     class Meta:
         app_label = 'eve_db'
@@ -101,7 +101,7 @@ class MapConstellation(models.Model):
     """
     id = models.IntegerField(unique=True, primary_key=True)
     name = models.CharField(max_length=255, blank=True)
-    region = models.ForeignKey(MapRegion, blank=True, null=True)
+    region = models.ForeignKey(MapRegion, blank=True, null=True, db_constraint=False)
     x = models.FloatField(blank=True, null=True)
     x_min = models.FloatField(blank=True, null=True)
     x_max = models.FloatField(blank=True, null=True)
@@ -114,7 +114,7 @@ class MapConstellation(models.Model):
     x = models.FloatField(blank=True, null=True)
     radius = models.FloatField(blank=True, null=True)
     #alliance = models.ForeignKey('eve_api.ApiPlayerAlliance', blank=True, null=True)
-    faction = models.ForeignKey('ChrFaction', blank=True, null=True)
+    faction = models.ForeignKey('ChrFaction', blank=True, null=True, db_constraint=False)
     sovereignty_start_time = models.DateTimeField(blank=True, null=True)
     sovereignty_grace_start_time = models.DateTimeField(blank=True, null=True)
 
@@ -136,13 +136,13 @@ class MapConstellationJump(models.Model):
     CCP Primary key: ("fromConstellationID" int(11), "toConstellationID" int(11))
     """
     from_region = models.ForeignKey(MapRegion,
-                                    related_name='constellation_jumps_from_region_set')
+                                    related_name='constellation_jumps_from_region_set', db_constraint=False, null=True)
     from_constellation = models.ForeignKey(MapConstellation,
-                                           related_name='constellation_jumps_from_constellation_set')
+                                           related_name='constellation_jumps_from_constellation_set', db_constraint=False, null=True)
     to_region = models.ForeignKey(MapRegion,
-                                  related_name='constellation_jumps_to_region_set')
+                                  related_name='constellation_jumps_to_region_set', db_constraint=False, null=True)
     to_constellation = models.ForeignKey(MapConstellation,
-                                         related_name='constellation_jumps_to_constellation_set')
+                                         related_name='constellation_jumps_to_constellation_set', db_constraint=False, null=True)
 
     class Meta:
         app_label = 'eve_db'
@@ -164,9 +164,9 @@ class MapSolarSystem(models.Model):
     CCP Primary key: "solarSystemID" int(11)
     """
     id = models.IntegerField(unique=True, primary_key=True)
-    region = models.ForeignKey(MapRegion, blank=True, null=True)
+    region = models.ForeignKey(MapRegion, blank=True, null=True, db_constraint=False)
     name = models.CharField(max_length=255, blank=True, null=True)
-    constellation = models.ForeignKey(MapConstellation, blank=True, null=True)
+    constellation = models.ForeignKey(MapConstellation, blank=True, null=True, db_constraint=False)
     x = models.FloatField(blank=True, null=True)
     x_min = models.FloatField(blank=True, null=True)
     x_max = models.FloatField(blank=True, null=True)
@@ -186,9 +186,9 @@ class MapSolarSystem(models.Model):
     has_interconstellational_link = models.BooleanField(default=False)
     security_level = models.FloatField(blank=True, null=True)
     faction = models.ForeignKey('ChrFaction', blank=True, null=True,
-                                related_name='solarsystem_set')
+                                related_name='solarsystem_set', db_constraint=False)
     radius = models.FloatField(blank=True, null=True)
-    sun_type = models.ForeignKey('InvType', blank=True, null=True)
+    sun_type = models.ForeignKey('InvType', blank=True, null=True, db_constraint=False)
     security_class = models.CharField(max_length=5, blank=True)
     #alliance = models.ForeignKey('eve_api.ApiPlayerAlliance', blank=True, null=True)
     sovereignty_level = models.IntegerField(blank=True, null=True)
@@ -215,19 +215,19 @@ class MapSolarSystemJump(models.Model):
     CCP Primary key: ("fromSolarSystemID" int(11), "toSolarSystemID" int(11))
     """
     from_region = models.ForeignKey(MapRegion, blank=True, null=True,
-                                    related_name='solar_system_jumps_from_region_set')
+                                    related_name='solar_system_jumps_from_region_set', db_constraint=False)
     from_constellation = models.ForeignKey(MapConstellation, blank=True,
                                            null=True,
-                                  related_name='solar_system_jumps_from_constellation_set')
+                                  related_name='solar_system_jumps_from_constellation_set', db_constraint=False)
     from_solar_system = models.ForeignKey(MapSolarSystem,
-                                          related_name='solar_system_jumps_from_solar_system_set')
+                                          related_name='solar_system_jumps_from_solar_system_set', db_constraint=False)
     to_region = models.ForeignKey(MapRegion, blank=True, null=True,
-                                  related_name='solar_system_jumps_to_region_set')
+                                  related_name='solar_system_jumps_to_region_set', db_constraint=False)
     to_constellation = models.ForeignKey(MapConstellation, blank=True,
                                          null=True,
-                                         related_name='solar_system_jumps_to_constellation_set')
+                                         related_name='solar_system_jumps_to_constellation_set', db_constraint=False)
     to_solar_system = models.ForeignKey(MapSolarSystem,
-                                        related_name='solar_system_jumps_to_solar_system_set')
+                                        related_name='solar_system_jumps_to_solar_system_set', db_constraint=False)
 
     class Meta:
         app_label = 'eve_db'
@@ -252,9 +252,9 @@ class MapJump(models.Model):
     """
     origin_gate = models.ForeignKey('MapDenormalize',
                                     unique=True, primary_key=True,
-                                    related_name='stargate_jump_origin_set')
+                                    related_name='stargate_jump_origin_set', db_constraint=False)
     destination_gate = models.ForeignKey('MapDenormalize',
-                                         related_name='stargate_jump_destination_set')
+                                         related_name='stargate_jump_destination_set', db_constraint=False)
 
     class Meta:
         app_label = 'eve_db'
@@ -273,7 +273,7 @@ class MapCelestialStatistic(models.Model):
     CCP Table: mapCelestialStatistics
     CCP Primary key: "celestialID" int(11)
     """
-    celestial = models.ForeignKey('MapDenormalize', unique=True, primary_key=True)
+    celestial = models.ForeignKey('MapDenormalize', unique=True, primary_key=True, db_constraint=False)
     temperature = models.FloatField(blank=True, null=True)
     spectral_class = models.CharField(max_length=255, blank=True)
     luminosity = models.FloatField(blank=True, null=True)
@@ -312,11 +312,11 @@ class MapDenormalize(models.Model):
     CCP Primary key: "itemID" int(11)
     """
     id = models.IntegerField(unique=True, primary_key=True)
-    type = models.ForeignKey('InvType', blank=True, null=True)
-    group = models.ForeignKey('InvGroup', blank=True, null=True)
-    solar_system = models.ForeignKey(MapSolarSystem, blank=True, null=True)
-    constellation = models.ForeignKey(MapConstellation, blank=True, null=True)
-    region = models.ForeignKey(MapRegion, blank=True, null=True)
+    type = models.ForeignKey('InvType', blank=True, null=True, db_constraint=False)
+    group = models.ForeignKey('InvGroup', blank=True, null=True, db_constraint=False)
+    solar_system = models.ForeignKey(MapSolarSystem, blank=True, null=True, db_constraint=False)
+    constellation = models.ForeignKey(MapConstellation, blank=True, null=True, db_constraint=False)
+    region = models.ForeignKey(MapRegion, blank=True, null=True, db_constraint=False)
     orbit_id = models.IntegerField(blank=True, null=True)
     x = models.FloatField(blank=True, null=True)
     y = models.FloatField(blank=True, null=True)
@@ -347,7 +347,7 @@ class MapLandmark(models.Model):
     id = models.IntegerField(unique=True, primary_key=True)
     name = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
-    solar_system = models.ForeignKey('MapSolarSystem', blank=True, null=True)
+    solar_system = models.ForeignKey('MapSolarSystem', blank=True, null=True, db_constraint=False)
     x = models.FloatField(blank=True, null=True)
     y = models.FloatField(blank=True, null=True)
     z = models.FloatField(blank=True, null=True)
@@ -390,7 +390,7 @@ class MapLocationWormholeClass(models.Model):
     CCP Table: MapLocationWormholeClasses
     CCP Primary key: "locationID" smallint(6)
     """
-    location = models.ForeignKey('MapDenormalize', unique=True, primary_key=True)
+    location = models.ForeignKey('MapDenormalize', unique=True, primary_key=True, db_constraint=False)
     wormhole_class = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -412,8 +412,8 @@ class WarCombatZone(models.Model):
     """
     id = models.IntegerField(unique=True, primary_key=True)
     name = models.CharField(max_length=255, blank=True)
-    faction = models.ForeignKey('ChrFaction')
-    center_system = models.ForeignKey('MapSolarSystem')
+    faction = models.ForeignKey('ChrFaction', db_constraint=False, null=True)
+    center_system = models.ForeignKey('MapSolarSystem', db_constraint=False, null=True)
     description = models.TextField(blank=True)
 
     class Meta:
@@ -433,8 +433,8 @@ class WarCombatZoneSystem(models.Model):
     CCP Table: WarCombatZone
     CCP Primary key: "combatZoneID" int(11)
     """
-    solar_system = models.ForeignKey('MapSolarSystem', max_length=255, blank=True)
-    combat_zone = models.ForeignKey('WarCombatZone', max_length=255, blank=True)
+    solar_system = models.ForeignKey('MapSolarSystem', max_length=255, blank=True, db_constraint=False, null=True)
+    combat_zone = models.ForeignKey('WarCombatZone', max_length=255, blank=True, db_constraint=False, null=True)
 
     class Meta:
         app_label = 'eve_db'
